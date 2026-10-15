@@ -17,7 +17,10 @@ import torch
 
 from nemo_rl.algorithms.loss import prepare_loss_input
 from nemo_rl.algorithms.loss.csd import CSDLossFn
-from nemo_rl.algorithms.x_token.loss_utils import LocalizedAlignment
+from nemo_rl.algorithms.x_token.loss_utils import (
+    LocalizedAlignment,
+    same_tokenizer_topk_kl,
+)
 from nemo_rl.distributed.batched_data_dict import BatchedDataDict
 
 _CT_V_STUDENT = 6
@@ -485,11 +488,16 @@ def test_same_vocab_chat_kd_uses_semantic_mask_and_its_own_denominator(tmp_path)
         student_token_mask=ce_mask,
         student_kd_token_mask=kd_mask,
     )
-    expected_kd = loss_fn._direct_topk_kl(
+    expected_kd = same_tokenizer_topk_kl(
         student,
         teacher,
-        align,
-        torch.tensor(2.0),
+        kd_mask=kd_mask,
+        sample_mask=sample_mask,
+        num_kd_tokens=torch.tensor(2.0),
+        vocab_size=_CT_V_STUDENT,
+        vocab_topk=3,
+        temperature=1.0,
+        reverse_kl=loss_fn.reverse_kl,
         tp_group=None,
         cp_group=None,
     )
