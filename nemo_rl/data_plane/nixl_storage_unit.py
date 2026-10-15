@@ -118,7 +118,7 @@ class NixlStorageUnit:
         unit_id: int,
         slab_bytes: int,
         *,
-        read_pin_s: float = 150.0,
+        read_pin_s: float,  # from tq_nixl.check_timeouts, the one source
         nixl_backend: str = "UCX",
         nixl_init_params: dict[str, Any] | None = None,
         directory: Any = None,

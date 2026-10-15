@@ -140,11 +140,12 @@ class NixlStoreConfig(BaseModel, extra="allow"):
     parallel_copy_min_bytes: int = 16777216
     # read_pin_s must be >= transfer_timeout_s + lease_margin_s (checked at
     # start): a region freed under a hinted READ is reused after read_pin_s.
-    read_pin_s: float = 150.0
+    # None: exactly that sum, so raising the transfer timeout raises the pin.
+    read_pin_s: float | None = None
     transfer_timeout_s: float = 120.0
     lease_margin_s: float = 30.0
-    # Deadline of one put / get, bounding all of its waits; default 2x transfer.
-    op_timeout_s: float = 240.0
+    # Deadline of one put / get, bounding all of its waits; None: 2x transfer.
+    op_timeout_s: float | None = None
     # Unfinished NIXL transfers may retain this much memory before the
     # process refuses further transfers (DataPlaneFatal).
     graveyard_max_bytes: int = 4294967296

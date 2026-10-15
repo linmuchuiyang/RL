@@ -113,7 +113,8 @@ def check_timeouts(cfg: dict[str, Any]) -> tuple[float, float, float]:
     """
     timeout_s = float(cfg.get("transfer_timeout_s", 120.0))
     margin = float(cfg.get("lease_margin_s", LEASE_MARGIN_S))
-    read_pin_s = float(cfg.get("read_pin_s", timeout_s + margin))
+    pin = cfg.get("read_pin_s")
+    read_pin_s = timeout_s + margin if pin is None else float(pin)
     if read_pin_s < timeout_s + margin:
         raise ValueError(
             f"NixlStore read_pin_s={read_pin_s} must be >= transfer_timeout_s "
@@ -121,7 +122,8 @@ def check_timeouts(cfg: dict[str, Any]) -> tuple[float, float, float]:
             "for transfer_timeout_s, and its source region must not be reused "
             "before it ends"
         )
-    op_timeout_s = float(cfg.get("op_timeout_s", 2 * timeout_s))
+    op = cfg.get("op_timeout_s")
+    op_timeout_s = 2 * timeout_s if op is None else float(op)
     return timeout_s, read_pin_s, op_timeout_s
 
 

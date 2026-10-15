@@ -641,10 +641,10 @@ data_plane:
     zero_copy_min_bytes: 1048576     # values in [1, 32] MiB are sent from caller memory
     zero_copy_max_bytes: 33554432
     parallel_copy_min_bytes: 16777216  # staged copies >= 16 MiB use parallel torch copy
-    read_pin_s: 150.0  # >= transfer_timeout_s + lease_margin_s
+    read_pin_s: null                 # null: transfer_timeout_s + lease_margin_s; else must be >= that
     transfer_timeout_s: 120.0
     lease_margin_s: 30.0
-    op_timeout_s: 240.0              # deadline of one put / get (all its waits)
+    op_timeout_s: null               # deadline of one put / get (all its waits); null: 2 x transfer_timeout_s
     graveyard_max_bytes: 4294967296  # memory unfinished transfers may retain before fatal
     placement: {policy: local_first} # local_first | spread
     store: {kind: unit}              # unit | file (file: add root: <shared dir>)

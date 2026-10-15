@@ -276,6 +276,14 @@ def test_read_pin_must_cover_a_transfer_plus_margin():
     ) == (3.0, 4.0, 6.0)
 
 
+@pytest.mark.parametrize("unset", [None, "absent"])
+def test_unset_pin_and_op_deadline_follow_the_transfer_timeout(unset):
+    cfg = {"transfer_timeout_s": 300.0}
+    if unset != "absent":  # what the schema defaults hand over
+        cfg["read_pin_s"] = cfg["op_timeout_s"] = unset
+    assert tq_nixl.check_timeouts(cfg) == (300.0, 330.0, 600.0)
+
+
 # ------------------------------------------------------------------ Graveyard (§2.2, §2.4)
 class _StuckAgent:
     def __init__(self):
