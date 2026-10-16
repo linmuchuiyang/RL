@@ -659,8 +659,12 @@ class MegatronGenerationMixin:
             "static_kv_memory_pointers": needs_static_kv_pointers,
             "use_cuda_graphs_for_non_decode_steps": use_cuda_graphs_for_non_decode_steps,
             "use_flashinfer_fused_rope": use_flashinfer_fused_rope,
+            # FlashInfer sampling kernels, NeMo-RL's choice since #2355; MCore defaults
+            # to "torch" and runs this sampler eagerly outside CUDA graphs.
             "sampling_backend": "flashinfer",
-            "use_synchronous_zmq_collectives": True,
+            "use_synchronous_zmq_collectives": mcore_generation_config[
+                "use_synchronous_zmq_collectives"
+            ],
             "materialize_only_last_token_logits": materialize_only_last_token_logits,
             "enable_chunked_prefill": enable_chunked_prefill,
             "enable_prefix_caching": mcore_generation_config["enable_prefix_caching"],

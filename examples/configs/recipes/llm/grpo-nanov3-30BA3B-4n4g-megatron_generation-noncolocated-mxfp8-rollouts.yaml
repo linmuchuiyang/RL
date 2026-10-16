@@ -29,12 +29,16 @@ policy:
     mcore_generation_config:
       refit_backend: nccl
       transformer_impl: inference_optimized
-      inference_grouped_gemm_backend: torch
+      # Only flashinfer runs MXFP8 experts on the TRT-LLM routed MoE kernels;
+      # torch and vllm both fall back to MCore's fused-MoE path for MXFP8.
+      inference_grouped_gemm_backend: flashinfer
       inference_moe_token_dispatcher_type: nvls
       tensor_model_parallel_size: 2
       expert_model_parallel_size: 8
       sequence_parallel: true
       logprobs_mode: raw_logprobs
+      # The checkpoint declares mamba_ssm_cache_dtype=float32; bf16 SSM state can overflow.
+      mamba_inference_ssm_states_dtype: float32
       fp8_cfg:
         enabled: true
         fp8: e4m3
